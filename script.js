@@ -20,7 +20,13 @@ let jumpSpeed = 5;
 
 let isJumping = false;
 
-setInterval(update, updateSpeed);
+let obstacleX = 0
+let obstacleY = 0
+let obstacleSize = 25
+let obstacleSpeed = 5
+let obstaclesArray = []
+
+let gameUpdating = setInterval(update, updateSpeed);
 
 function update() {
   context.fillStyle = 'black';
@@ -31,6 +37,27 @@ function update() {
 
   context.fillStyle = 'red';
   context.fillRect(playerX, playerY, 25, 25);
+
+  if (obstaclesArray.length > 0) {
+  for (let i = 0; i < obstaclesArray.length; i++){
+    obstaclesArray[i][0] -= obstacleSpeed
+
+    context.fillStyle= "yellow"
+    context.fillRect(obstaclesArray[i][0], obstaclesArray[i][1], obstacleSize, obstacleSize)
+    console.log(obstaclesArray[i])
+    if (obstaclesArray[i][0] < -50) {
+      obstaclesArray.shift(0)
+    }
+    if ((obstaclesArray[i][0] >= playerX && obstaclesArray[i][0] <= (playerX + 25)) &&
+      (obstaclesArray[i][1] >= playerY && obstaclesArray[i][1] <= (playerY + 25))) {
+      console.log("gameOver")
+      clearInterval(gameUpdating)
+    }
+    
+  }
+}
+  
+
 }
 
 document.addEventListener('keydown', jump);
@@ -39,6 +66,7 @@ let counting = 0;
 
 function jump(e) {
   if (e.code === 'ArrowUp' && !isJumping) {
+    createObstacle()
     isJumping = true;
     let timerId = setInterval(() => {
       velocityY = -jumpSpeed;
@@ -59,3 +87,10 @@ function jump(e) {
     }, updateSpeed);
   }
 }
+
+
+function createObstacle() {
+  obstaclesArray.push([canvas.width, (canvas.height - obstacleSize)])
+  console.log(obstaclesArray[0][0])
+}
+
